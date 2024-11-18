@@ -1,0 +1,147 @@
+\documentclass[a4paper,11pt]{article}
+\begin{document}
+
+\begin{center}
+ALL CODES ARE IN FORTRAN 77
+\end{center}
+\begin{center}
+  PROBLEM I
+\end{center}
+\begin{enumerate}
+\item The codes were written with some non-dimensional variables different
+  from those in paper. They are given below. Primes are used for these. Nomenclature for
+  dimensional variables is same as in the paper.  The different variables are:
+  \[\tau^\prime= \frac{D
+    t}{L^2},\Lambda^\prime=\frac{|I|L}{DC_{ref}nF}\]
+  Hence, these are related to those in the paper as follows:
+  \[\tau=\tau^\prime\frac{D_1}{D}, \Lambda=\Lambda^\prime\frac{D}{D_1}\]
+\item  
+  Some are defined in the code only. 
+  \[{\rm kay\_1}=\kappa_1^\prime=\kappa_1\frac{D_1}{D},\,\, {\rm kay\_2}=\kappa_2^\prime=\kappa_3\frac{D_1}{D}\]
+  \[{\rm cap\_gamma}=\frac{|I|L}{DnF}, {\rm c\_not}=C_{ref},\,\,\,{\rm
+    hence}\,\,\,\frac{\rm cap\_gamma}{\rm c\_not} = \Lambda^\prime\]
+  delta\_tau = delta\_$\tau^\prime$ is the increment in time step.
+\item Other variables in the code are same as in the paper:
+  deltai=$\Delta_i$,alambda(k)=$\lambda_k$, ai(k),bi(k) are the
+  coefficients in the $k^{th}$ eigenfunction. 
+\end{enumerate}
+\vspace{.1in}
+
+\noindent {\bf Code named iteration\_uniform\_ic.f} 
+
+This is the code to compute $\kappa_1^\prime$ and $\kappa_3^\prime$
+as a function of $\tau^\prime$. 
+
+The input data are in these files:
+\begin{enumerate}
+  \item input\_plotcheq.dat contains geometry of the cell
+  \item  output\_normalized\_vector.dat contains information
+    on eigenvalues and normalized  eigenfunction coefficients
+\item inner\_prod\_uniform\_ic\_diff\_5bc.dat contains data on the
+  inner product of the uniform initial condition with the
+  eigenfunctions.
+\item operating.dat contains information for running program and
+    also to change $\Lambda^\prime$ through cap\_gamma.
+\end{enumerate}
+{\it The first three data files are common between problem I and
+  III. They are placed in the directory code\_problem\_I to avoid
+  unnecessary repetition.}
+The output file is output\_iteration\_general.dat. Second column is
+$\tau^\prime$. The last two columns are kay\_1 and kay\_2. The middle
+columns are the second terms of the r.h.s. in the second
+equation of eq.33 of the paper for each eigenfunction. This data is used 
+The first term of the first equation of eq.33 of the paper is a linear
+decreasing function of time as seen from eq.33. Both these are used to
+construct concentration profile using the following code. 
+
+\vspace{.1in}
+\noindent {\bf Code named conc\_profile.f}
+
+This constructs concentration profile using eq.32 of the paper. The
+notation is same as described above and is a straight forward
+summation. output\_conc\_profile.dat is the output file. The output is
+$u$ vs. $\xi$ as different values of $\tau^\prime$.
+\vspace{0.1in}
+
+{\it All code files and data files are in the directory code\_problem\_I.}
+\begin{center}
+  PROBLEM III
+\end{center}
+Many items and files are common to problem I. Hence, only differences
+will be mentioned here.
+\begin{enumerate}
+\item The new quantities defined make computation easier. These are
+  udotz0(i) $=\left<{\bf u.Z}_o\right>(\tau^\prime)$ and udotz(i,j) $=\left<{\bf u.Z}_j\right>(\tau^\prime) $
+\item cs1max and cs3max are $C_{s1,max}$ and $C_{s3,max}$ of paper.
+  \item u4 and u5 are $u_4$ and $u_5$ of paper.
+\end{enumerate}
+\vspace{.1in}
+\noindent {\bf Code named iteration\_uniform\_ic\_non\_linear.f}
+
+This is the code to compute $\kappa_1^\prime$, $\kappa_3^\prime$, and $u_i(\xi)$
+as a function of $\tau^\prime$.  conc\_profile.f was integrated into
+iteration program in this code.
+
+Only new input file is operating\_non\_linear.dat instead of
+operating.dat as it needs data on lithium concentration in the active
+materials. 
+
+The output files are
+\begin{enumerate}
+  \item first three columns of output\_iteration\_general.dat are $i$
+  (the time index),  kay\_1 and kay\_2.
+  \item output\_li\_content.dat gives i (the time index) against
+    $u_4$ and $u_5$  as a function of j
+    (index of $\xi$).   
+\item output\_conc\_profile.dat gives i (the time index) versus
+  $u_1$,$u_2$,$u_3$ as a function of  j
+  (index of $\xi$).
+\end{enumerate}
+
+{\it All code files and data files are in the directory code\_problem\_III.}
+
+\vspace{0.1in}
+
+\begin{center}
+  PROBLEM II
+\end{center}
+
+
+\begin{enumerate}
+\item The codes were written with some non-dimensional variables different
+  from those in paper. They are given below. Primes are used for these. Nomenclature for
+  dimensional variables is same as in the paper.  These are as follows:
+  \[\tau^\prime= \frac{D_1
+    t}{L_1^2},\Lambda^\prime=\frac{|I|L_1}{D_1C_{ref}nF}\]
+  Hence, these are related to those in the paper as follows:
+  \[\tau=\tau^\prime\frac{L^2_1}{L^2}, \Lambda=\Lambda^\prime\frac{L}{L_1}\]
+\item   Some are defined in the code only.
+ \[{\rm alpha}=\frac{L_1}{L-L_1}, {\rm beta(j)}=\lambda(j), {\rm cap\_lambda}=\Lambda^\prime, {\rm akappa}=\kappa_1^\prime,{\rm u1}=u_m, {\rm conc(i)}=u_1(\xi) \]
+\[\kappa_1^\prime=\kappa_1\frac{L_1^2}{L^2}\]
+ \[{\rm g(i)}=g(\tau) {\rm of\,\, eq.A.18}, {\rm
+  u\_dot\_z\_zero(i)}=\left<{\bf u.Z}_o\right>(\tau),{\rm
+  u\_dot\_zjxi(i)}=\sum_j\left<{\bf u.Z}_j\right>(\tau)Z_j(\xi)\]
+\item const\_norm(j) are the normalization constants for
+eigenfunctions, eq.(A.12) of paper.
+\end{enumerate}
+\vspace{.1in}
+
+\noindent {\bf Code named program\_iteration\_v\_4.f} 
+
+This is the iteration program. It generates results for
+tau,i (index for time), u1(i), akappa(i), u\_dot\_z\_zero(i)  in the output file named
+  output\_plot\_tau\_u1.dat. The input files are
+  \begin{enumerate}
+    \item input\_test\_ev.dat for eigen values
+\item input\_iteration.dat for giving inputs including cap\_lambda for
+  changing operating conditions.
+\end{enumerate}
+  \noindent {\bf Code named program\_conc\_xi\_v\_2.f}
+
+  Reads output from previous program and generates concentration
+  profiles using eq.41 of paper. The output is in the file 
+output\_all\_xi\_tau.dat. It gives $u_1(\tau)$ at each value of $\xi$.\\
+
+
+{\it All  code files  and data files are in the directory code\_program\_II.}
+\end{document}
